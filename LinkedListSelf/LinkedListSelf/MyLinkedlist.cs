@@ -100,10 +100,16 @@ namespace LinkedListSelf
             }
         }
 
+
+         // 1 2 3
         public void DeleteK(int k)
         {
+            if (k == 0)
+            {
+                DeleteFirst();
+                return;
+            }
             var el = first;
-            int val = 0;
             Elem<T> prevEL = null;
             while (el != null)
             {
@@ -112,7 +118,6 @@ namespace LinkedListSelf
                     var n = el.Next;
                     prevEL.Next = n;
                     el = prevEL;
-
                 }
 
                 prevEL = el;

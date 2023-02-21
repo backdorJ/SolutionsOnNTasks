@@ -10,8 +10,7 @@ class Program
         list1.AddLast(3);
         list1.AddLast(4);
 
-        // 1 3 4
-
+        list1.DeleteK(3);
 
         Console.WriteLine(list1);
 
