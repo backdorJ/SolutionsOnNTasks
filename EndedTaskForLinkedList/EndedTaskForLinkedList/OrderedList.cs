@@ -121,7 +121,7 @@ namespace EndedTaskForLinkedList
                 }
             }
             curr.next = currSec;
-        }
+        }   
 
         public override string ToString()
         {

@@ -16,6 +16,7 @@ class Program
         Console.WriteLine(list2);
 
         list.MergeLinkedList(list2);
+        list.Delete(-1);
 
         Console.WriteLine(list);
     }

@@ -35,5 +35,14 @@ namespace CollectionClassDelegate
 
             return temp;
         }
+
+        // С дополнитульным условием
+        public T1 Aggreagete<T1>(Func<T1,T,T1> function, T1 defVal)
+        {
+            foreach (var item in _collection)
+                defVal = function(defVal, item);
+
+            return defVal;
+        }
     }
 }
