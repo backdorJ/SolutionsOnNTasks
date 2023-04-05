@@ -1,4 +1,5 @@
 ﻿using LInq;
+using LInq.LinqObj71;
 using LInq.Objects;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -7,8 +8,172 @@ class Program
 {
     static void Main()
     {
-        LinqObj60();
+        LinqObj93();
     }
+    public static void LinqObj93() // [+]
+    {
+        var listA = new List<(int codePotr, string street, int birthday)>()
+        {
+            (1,"Lomonosovo", 2004),
+            (2, "Pushkina", 2001),
+            (3,"Orlovo", 1999),
+        };
+
+        var listB = new List<(string category,string country, int arcticul)>()
+        {
+            ("Games", "Russia", 20),
+            ("Products", "USA", 10),
+            ("Flowers", "Tokyo", 50),
+        };
+
+        var listC = new List<(string nameShop, int codePotr, double discount)>()
+        {
+            ("Magnit", 1, 10),
+            ("M-Video", 2, 20),
+            ("FlowerShop", 3, 50),
+        };
+
+        var listE = new List<(int codePotr, int arcticul, string nameShop)>()
+        {
+            (1,20, "Magnit"),
+            (2,10,"M-Video"),
+            (3, 50, "FlowerShop"),
+        };
+
+        var data = from b in listB
+                   join e in listE on b.arcticul equals e.arcticul
+                   join a in listA on e.codePotr equals a.codePotr
+                   join c in listC on a.codePotr equals c.codePotr
+                   group new { c.discount, b.country, a.street } by new { b.country, a.street }
+                   into g
+                   select new
+                   {
+                       Country = g.Key.country,
+                       Street = g.Key.street,
+                       MaxSkidka = g.Max(x => x.discount)
+                   };
+        foreach (var dat in data.OrderBy(x => x.Street).ThenBy(x => x.Country))
+        {
+            Console.WriteLine($"Страна проживания {dat.Country} | Улица: {dat.Street} | Скидка: {dat.MaxSkidka}");
+        }
+    }
+    public static void LinqObj82()
+    {
+        var listB = new List<(string category, string country, int arcticul)>()
+        {
+            ("Product", "Russia", 1234),
+            ("Games", "USA",       234),
+            ("Flowers", "Japan",    14),
+        };
+
+        var listD = new List<(int cost, int arcticul, string nameShop)>()
+        {
+            (1000, 1234, "Magazine-1"),
+            (5000, 234, "Magazine-2"),
+            (10000, 14, "Magazine-3"),
+        };
+
+        var listE = new List<(int arcticul, int code, string nameShop)>()
+        {
+            (1234, 1, "Magazine-1"),
+            (234, 2, "Magazine-2"),
+            (14, 3, "Magazine-3"),
+        };
+
+        var employee = from b in listB
+                       join d in listD on b.arcticul equals d.arcticul
+                       join e in listE on d.arcticul equals e.arcticul
+                       select new
+                       {
+                           Category = b.category,
+                           ConsumerCode = e.code,
+                           Price = d.cost
+                       };
+        var data = from empl in employee
+                   group empl by empl.ConsumerCode into g
+                   select new
+                   {
+                       ConsumerCode = g.Key,
+                       CategoryCount = g.Select(x => x.Category).Distinct().Count(),
+                       MaxPrice = g.Max(x => x.Price)
+                   };
+
+        var oredredData = from dat in data
+                          orderby dat.ConsumerCode descending, dat.MaxPrice
+                          select dat;
+
+        foreach (var item in oredredData)
+        {
+            Console.WriteLine($"CustomersCode: {item.ConsumerCode} CategoryCount: {item.CategoryCount}" +
+                $" MaxPrice: {item.MaxPrice}");
+        }
+    } // [+]
+    public static void LinqObj71()
+    {
+        var listPotrebitel = new List<A>
+        {
+            new A{CodePotrebitelya = 1, Street = "Габдулина", Birthday = new DateTime(2004,2,12)},
+            new A{CodePotrebitelya = 2, Street = "Коморово", Birthday = new DateTime(1999,5,22)},
+            new A{CodePotrebitelya = 3, Street = "Яшкино", Birthday = new DateTime(2014,5,15)},
+            new A{CodePotrebitelya = 1, Street = "Набиуллино", Birthday = new DateTime(2008,1,15)},
+            new A{CodePotrebitelya = 3, Street = "Гагарино", Birthday = new DateTime(1999,6,10)},
+            new A{CodePotrebitelya = 1, Street = "Виково", Birthday = new DateTime(2022,12,14)},
+        };
+
+        var listShop = new List<C>
+        {
+            new C{ShopName = "Магнит", CodePotrebitelya = 1, Skidka = 10},
+            new C{ShopName = "Петярочка", CodePotrebitelya = 2, Skidka = 5},
+            new C{ShopName = "Летуаль", CodePotrebitelya = 1, Skidka = 2},
+            new C{ShopName = "ФиксПрайс", CodePotrebitelya = 3, Skidka = 100},
+            new C{ShopName = "Золотое Яблоко", CodePotrebitelya = 2, Skidka = 50},
+            new C{ShopName = "Лента", CodePotrebitelya = 1, Skidka = 20},
+            new C{ShopName = "Магнит", CodePotrebitelya = 2, Skidka = 10},
+            new C{ShopName = "Петярочка", CodePotrebitelya = 2, Skidka = 15},
+            new C{ShopName = "Летуаль", CodePotrebitelya = 3, Skidka = 2},
+            new C{ShopName = "ФиксПрайс", CodePotrebitelya = 2, Skidka = 1},
+            new C{ShopName = "Золотое Яблоко", CodePotrebitelya = 2, Skidka = 3},
+            new C{ShopName = "Лента", CodePotrebitelya = 2, Skidka = 5},
+        };
+
+        var empl = from user in listPotrebitel
+                   join shop in listShop on user.CodePotrebitelya equals shop.CodePotrebitelya
+                   group new { user.Birthday, shop.Skidka, shop.CodePotrebitelya } by shop.ShopName
+                   into eGroup
+                   orderby eGroup.Key
+                   select new
+                   {
+                       Shop = eGroup.Key,
+                       Customers = from cust in eGroup
+                                   group cust by cust.Birthday into disccount
+                                   orderby disccount.Key
+                                   select new
+                                   {
+                                       Discount = disccount.Key,
+                                       Customers = from cust in disccount
+                                                   orderby cust.Skidka
+                                                   select new { cust.Skidka, cust.Birthday }
+                                   } into groupedDiscount
+                                   orderby groupedDiscount.Discount descending
+                                   select groupedDiscount
+                   };
+        foreach (var item in empl)
+        {
+            Console.WriteLine(item.Shop);
+            foreach (var discount in item.Customers)
+            {
+                Console.WriteLine($"Скидка: {discount.Discount}");
+                var maxDiscount = discount.Customers.Max(x => x.Skidka);
+                var cust = discount.Customers.Where(x => x.Skidka == maxDiscount)
+                    .OrderBy(x => x.Birthday);
+                foreach (var customer in cust)
+                {
+                    Console.WriteLine($"{customer.Birthday} year {maxDiscount}%");
+                }
+
+            }
+        }
+    } // [+]
     public static void LinqObj60()
     {
         var list = new List<EGE>
@@ -21,19 +186,6 @@ class Program
             new EGE { Surname = "Хрянтев    ", Initsial = "ssssas", NumberSchool = 3, PointExam = "90 90 10" },
             new EGE { Surname = "Kukova", Initsial = "ksadasd", NumberSchool = 1, PointExam = "90 20 10" }
         };
-
-        //var avgResult = from user in list
-        //                group user by user.NumberSchool into eGroup
-        //                let countPerson = eGroup.Count()
-        //                let mathPoint = eGroup.Sum()
-        //                orderby eGroup.Key descending
-        //                select new
-        //                {
-        //                    Average = avg,
-        //                    NumberSchool = eGroup.Key,
-        //                };
-        //foreach (var user in avgResult)
-        //    Console.WriteLine($"NumberSchool: {user.NumberSchool} AvgPoint: {user.Average}");
 
         var user = from us in list
                    group us by us.NumberSchool into eGroup
@@ -49,11 +201,9 @@ class Program
                        SchoolNumber = eGroup.Key
                    };
         foreach (var item in user)
-        {
             Console.WriteLine($"School number: {item.SchoolNumber} | AvgMath: {item.AvgMath} " +
                 $"| AvgRuss: {item.AvgRuss} | AvgInfo: {item.AvgInfo}");
-        }
-    }
+    } // [+]
     public static void LinqObj52()
     {
         var list = new List<EGE>
@@ -174,8 +324,8 @@ class Program
             new Debtor{Surname = "Nabiullin", NumberRoom = 2, Arrears = 0.90},
             new Debtor{Surname = "Ivanov", NumberRoom = 3, Arrears = 11.25},
             new Debtor{Surname = "Typaev", NumberRoom = 1, Arrears = 15.25},
-            new Debtor{Surname = "Иванов", NumberRoom = 2, Arrears = 150.25},
-            new Debtor{Surname = "Маринов", NumberRoom = 10, Arrears = 150.25},
+            new Debtor{Surname = "Иванов", NumberRoom = 112, Arrears = 150.25},
+            new Debtor{Surname = "Маринов", NumberRoom = 102, Arrears = 150.25},
             new Debtor{Surname = "Картинов", NumberRoom = 30, Arrears = 150.25},
             new Debtor{Surname = "Умиротверениев", NumberRoom = 40, Arrears = 150.25},
             new Debtor{Surname = "Хз", NumberRoom = 20, Arrears = 150.25},
@@ -185,7 +335,7 @@ class Program
         // (x.Item2 - 1) / 4 + 1
 
         var users = from user in list
-                    let ground = (user.NumberRoom - 1) / 4 + 1
+                    let ground = ((user.NumberRoom - 1) / 4 + 1) % 9
                     group user by ground into eGroup
                     let ground = eGroup.Key
                     select new
@@ -324,7 +474,7 @@ class Program
         };
         var monthsGroup = from user in list
                           group user by user.Code into eGroup
-                          let sumMonth = eGroup.Sum(x => x.Month)
+                          let sumMonth = eGroup.Count()
                           orderby sumMonth, eGroup.Key
                           select new
                           {
@@ -332,7 +482,7 @@ class Program
                               Code = eGroup.Key,
                           };
         foreach (var user in monthsGroup)
-            Console.WriteLine($"Code: {user.Code} SumMonth: {user.sumMonths}");
+            Console.WriteLine($"Code: {user.Code} Month: {user.sumMonths}");
     } // [+]
     public static void LinqObj4()
     {
