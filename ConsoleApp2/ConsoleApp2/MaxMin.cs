@@ -24,7 +24,7 @@ namespace ConsoleApp2
             {
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
-                    Console.Write($"{matrix[i,j]} ");
+                    Console.Write($"{matrix[i, j]} ");
                 }
                 Console.WriteLine();
             }
@@ -63,14 +63,12 @@ namespace ConsoleApp2
             var min = int.MaxValue;
             return Task.Run(() =>
             {
-                lock (_lock)
+                for (int i = 0; i < matrix.GetLength(1); i++)
                 {
-                    for (int i = 0; i < matrix.GetLength(1); i++)
-                    {
-                        if (min > matrix[(int)index, i])
-                            min = matrix[(int)index, i];
-                    }
+                    if (min > matrix[(int)index, i])
+                        min = matrix[(int)index, i];
                 }
+
                 return min;
             });
         }
