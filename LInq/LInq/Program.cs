@@ -10,7 +10,7 @@ class Program
     {
         LinqObj93();
     }
-    public static void LinqObj93() // [+]
+    public static void LinqObj93() 
     {
         var listA = new List<(int codePotr, string street, int birthday)>()
         {
@@ -56,8 +56,8 @@ class Program
         {
             Console.WriteLine($"Страна проживания {dat.Country} | Улица: {dat.Street} | Скидка: {dat.MaxSkidka}");
         }
-    }
-    public static void LinqObj82()
+    } // [+]
+    public static void LinqObj82() 
     {
         var listB = new List<(string category, string country, int arcticul)>()
         {
@@ -77,6 +77,8 @@ class Program
         {
             (1234, 1, "Magazine-1"),
             (234, 2, "Magazine-2"),
+            (234, 2, "Magazine-3"),
+            (234, 3, "Magazine-4"),
             (14, 3, "Magazine-3"),
         };
 
@@ -110,68 +112,46 @@ class Program
     } // [+]
     public static void LinqObj71()
     {
-        var listPotrebitel = new List<A>
+        var list = new List<(int codePotr, int year, string address)>
         {
-            new A{CodePotrebitelya = 1, Street = "Габдулина", Birthday = new DateTime(2004,2,12)},
-            new A{CodePotrebitelya = 2, Street = "Коморово", Birthday = new DateTime(1999,5,22)},
-            new A{CodePotrebitelya = 3, Street = "Яшкино", Birthday = new DateTime(2014,5,15)},
-            new A{CodePotrebitelya = 1, Street = "Набиуллино", Birthday = new DateTime(2008,1,15)},
-            new A{CodePotrebitelya = 3, Street = "Гагарино", Birthday = new DateTime(1999,6,10)},
-            new A{CodePotrebitelya = 1, Street = "Виково", Birthday = new DateTime(2022,12,14)},
+            (1, 2004, "Address-1"),
+            (2, 2002, "Address-2"),
+            (3, 2001, "Address-3"),
+            (4, 2003, "Address-4"),
+            (5, 1998, "Address-5"),
         };
 
-        var listShop = new List<C>
+        var list2 = new List<(int codePotr, double discount, string nameShop)>
         {
-            new C{ShopName = "Магнит", CodePotrebitelya = 1, Skidka = 10},
-            new C{ShopName = "Петярочка", CodePotrebitelya = 2, Skidka = 5},
-            new C{ShopName = "Летуаль", CodePotrebitelya = 1, Skidka = 2},
-            new C{ShopName = "ФиксПрайс", CodePotrebitelya = 3, Skidka = 100},
-            new C{ShopName = "Золотое Яблоко", CodePotrebitelya = 2, Skidka = 50},
-            new C{ShopName = "Лента", CodePotrebitelya = 1, Skidka = 20},
-            new C{ShopName = "Магнит", CodePotrebitelya = 2, Skidka = 10},
-            new C{ShopName = "Петярочка", CodePotrebitelya = 2, Skidka = 15},
-            new C{ShopName = "Летуаль", CodePotrebitelya = 3, Skidka = 2},
-            new C{ShopName = "ФиксПрайс", CodePotrebitelya = 2, Skidka = 1},
-            new C{ShopName = "Золотое Яблоко", CodePotrebitelya = 2, Skidka = 3},
-            new C{ShopName = "Лента", CodePotrebitelya = 2, Skidka = 5},
+            (1, 10, "Shop-1"),
+            (1, 50, "Shop-2"),
+            (2, 20, "Shop-2"),
+            (3, 60, "Shop-3"),
+            (3, 40, "Shop-1"),
+            (4,  5, "Shop-4"),
         };
 
-        var empl = from user in listPotrebitel
-                   join shop in listShop on user.CodePotrebitelya equals shop.CodePotrebitelya
-                   group new { user.Birthday, shop.Skidka, shop.CodePotrebitelya } by shop.ShopName
-                   into eGroup
-                   orderby eGroup.Key
-                   select new
-                   {
-                       Shop = eGroup.Key,
-                       Customers = from cust in eGroup
-                                   group cust by cust.Birthday into disccount
-                                   orderby disccount.Key
-                                   select new
-                                   {
-                                       Discount = disccount.Key,
-                                       Customers = from cust in disccount
-                                                   orderby cust.Skidka
-                                                   select new { cust.Skidka, cust.Birthday }
-                                   } into groupedDiscount
-                                   orderby groupedDiscount.Discount descending
-                                   select groupedDiscount
-                   };
-        foreach (var item in empl)
+        var result = from a in list2
+                     join c in list on a.codePotr equals c.codePotr
+                     group a by a.nameShop into g
+                     orderby g.Key ascending
+                     let minCode = g.Select(x => x.codePotr).Min()
+                     select new
+                     {
+                         Year = list.Where(x => x.codePotr == minCode).Select(x => x.year).First(),
+                         Group = g.Key,
+                         CodePotrebitelya = g.Where(x => x.codePotr == minCode)
+                         .Select(x => new { Code = x.codePotr, Discount = x.discount }),
+                     };
+
+        foreach (var item in result)
         {
-            Console.WriteLine(item.Shop);
-            foreach (var discount in item.Customers)
+            Console.WriteLine($"ShopName: {item.Group} People Year: {item.Year}");
+            foreach (var people in item.CodePotrebitelya)
             {
-                Console.WriteLine($"Скидка: {discount.Discount}");
-                var maxDiscount = discount.Customers.Max(x => x.Skidka);
-                var cust = discount.Customers.Where(x => x.Skidka == maxDiscount)
-                    .OrderBy(x => x.Birthday);
-                foreach (var customer in cust)
-                {
-                    Console.WriteLine($"{customer.Birthday} year {maxDiscount}%");
-                }
-
+                Console.WriteLine($"Code: {people.Code} Discount: {people.Discount}");
             }
+            Console.WriteLine();
         }
     } // [+]
     public static void LinqObj60()
