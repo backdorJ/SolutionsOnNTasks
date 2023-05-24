@@ -19,14 +19,31 @@ public class Program
     {
         var type = typeof(T);
 
-        //GetAllField(obj);
-        //GetAllProperties(obj);
+        GetAllField(obj);
+        GetAllProperties(obj);
         InvokeAllMethods(obj);
+        GetAllConstructors(obj);
+    }
+
+    public static void GetAllConstructors<T>(T obj)
+    {
+        var type = typeof(T);
+        Console.WriteLine("Constructors");
+        while (type != null)
+        {
+            var constructors = type.GetConstructors(BindingFlags.Public
+                                                    | BindingFlags.Instance | BindingFlags.NonPublic);
+            Console.WriteLine($"Base Type: {type.BaseType}");
+            foreach (var constructorInfo in constructors)
+                Console.WriteLine($"Name: {constructorInfo.Name} MembersType: {constructorInfo.MemberType}");
+            type = type.BaseType;
+        }
     }
 
     public static void InvokeAllMethods<T>(T obj)
     {
         var type = typeof(T);
+        Console.WriteLine("Methods");
         while (type != null)
         {
             var methods = type.GetMethods(BindingFlags.Public |
@@ -76,7 +93,7 @@ public class Program
                 Console.WriteLine("Update Prop");
                 var propType = propertyInfo.PropertyType;
                 var newVal = CreateValue(propType);
-                if(newVal == null)
+                if (newVal == null)
                     propertyInfo.SetValue(obj, "Maybee smth?");
                 else
                 {
@@ -95,12 +112,12 @@ public class Program
     {
         var rnd = new Random();
         if (type == typeof(int))
-            return rnd.Next(-100,100);
+            return rnd.Next(-100, 100);
         else if (type == typeof(Array))
             return "hello";
         return null;
     }
-    
+
     private static object CreateValue(Type type)
     {
         return type.IsValueType ? Activator.CreateInstance(type) : null;
@@ -115,7 +132,7 @@ public class Program
             var fields = type.GetFields(BindingFlags.Public |
                                         BindingFlags.NonPublic | BindingFlags.Instance
                                         | BindingFlags.Static);
-            
+
             foreach (var field in fields)
             {
                 Console.WriteLine($"Name: {field.Name} | " +
@@ -130,7 +147,7 @@ public class Program
                 {
                     field.SetValue(obj, -100);
                 }
-                
+
                 Console.WriteLine($"Name: {field.Name} | " +
                                   $"Value: {field.GetValue(obj)}");
             }
