@@ -1,0 +1,47 @@
+Паттерн Strateg, говорит о том, что мы должны инкапсулировать все методы,
+то есть мы должны создать один интерфейс который будет отвечать за алгоритм,
+а другие классы будут реализовывать этот интерфейс и реализовывать свой алгоритм действий, после чего мы создаем один общий класс, который будет хранить в себе один метод который будет вызывать метод из интерфейса и свойство
+которой будет присваиваться классы которые реализовывоют метод и интерфейс 
+Пример: у нас есть задумка, чтобы наш герой атаковал разными орудиями, например, нож пистолет автомат, если мы будем модифицировать каждый раз метод в классе, добавляя к нему каждый раз какие то оружия, то мы будем нарушать принцип SOLID, а именно 0 - принцип открытости-закрытости, который говорит что класс не должен быть модифицироваться, а должен расширяться
+Приме кода с паттерном Strategy
+
+interface IAttacker 
+{
+   void Attack();
+}
+
+class PistolGun : IArracker
+{
+	public override void Attack()
+	{
+		Console.WriteLine("I am shooting from pistol");
+	}
+}
+
+
+class Macine : IAttacker
+{
+	public override void Attack()
+	{
+		Console.WriteLine("I am shooting from machine");
+	}
+}
+
+
+class Hero
+{
+	public IAttacker Gun {private get; set;}
+	public string NameHero {private get;set;}
+	public Hero(string heroName, IAttacker typeGun = null)
+	{
+		NameHero = heroName;
+		Gun = typeGun
+	}
+
+	public void Attack()
+	{
+		if(Gun == null) Console.WriteLine("You dont choose weapon");
+		Console.WriteLine($"{NameHero} gonna be shooting}");
+		Gun.Attack();
+	}
+}
